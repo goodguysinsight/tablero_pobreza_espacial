@@ -535,7 +535,7 @@ dash.calc('conteo', {
     box.replaceChildren();
     if (!U || !U.length) { if (U && !U.length) { const e = document.createElement('div'); e.className = 'ae-empty'; e.textContent = `Sin datos para ${st.anio}.`; box.appendChild(e); } return; }
     const W = box.clientWidth, H = Math.max(300, Math.min(440, W * 0.78));
-    const m = { l: 40, r: 14, t: 14, b: 34 };
+    const m = { l: 40, r: 14, t: 28, b: 34 };
     const ext = Math.max(2, d3.max(U, (u) => Math.max(Math.abs(u.z), Math.abs(u.wz)))) * 1.08;
     const x = d3.scaleLinear([-ext, ext], [m.l, W - m.r]).nice(), y = d3.scaleLinear([-ext, ext], [H - m.b, m.t]).nice();
     const svg = svgEl('svg', { width: '100%', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Diagrama de dispersión de Moran' }, box);
@@ -543,11 +543,11 @@ dash.calc('conteo', {
     y.ticks(6).forEach((t) => { const l = svgEl('line', { x1: m.l, x2: W - m.r, y1: y(t), y2: y(t) }, svg); l.style.stroke = 'var(--cds-chart-grid)'; const tx = svgEl('text', { x: m.l - 6, y: y(t) + 4, 'text-anchor': 'end' }, svg); tx.textContent = loc.format('~f')(t); });
     [[x(0), m.t, x(0), H - m.b], [m.l, y(0), W - m.r, y(0)]].forEach(([a, b, c, d]) => { const l = svgEl('line', { x1: a, y1: b, x2: c, y2: d, 'stroke-dasharray': '4 3' }, svg); l.style.stroke = 'var(--cds-chart-axis)'; });
     const ax1 = svgEl('text', { x: W - m.r, y: H - 4, 'text-anchor': 'end' }, svg); ax1.textContent = 'Valor estandarizado (z)';
-    const ax2 = svgEl('text', { x: m.l + 4, y: m.t + 10 }, svg); ax2.textContent = 'Rezago espacial (Wz)';
+    const ax2 = svgEl('text', { x: m.l, y: 14 }, svg); ax2.textContent = 'Rezago espacial (Wz)';
     // cuadrantes
-    [['Alto-Alto', W - m.r - 4, m.t + 26, 'end'], ['Bajo-Alto', m.l + 4, m.t + 26, 'start'], ['Bajo-Bajo', m.l + 4, H - m.b - 6, 'start'], ['Alto-Bajo', W - m.r - 4, H - m.b - 6, 'end']].forEach(([n, a, b, an]) => { const t = svgEl('text', { x: a, y: b, 'text-anchor': an, class: 'ae-strong' }, svg); t.textContent = n; t.style.fill = n === 'Alto-Bajo' ? '#e08a2c' : n === 'Bajo-Alto' ? '#4f9fc7' : CL[n]; });
+    [['Alto-Alto', W - m.r - 4, m.t + 14, 'end'], ['Bajo-Alto', m.l + 4, m.t + 14, 'start'], ['Bajo-Bajo', m.l + 4, H - m.b - 6, 'start'], ['Alto-Bajo', W - m.r - 4, H - m.b - 6, 'end']].forEach(([n, a, b, an]) => { const t = svgEl('text', { x: a, y: b, 'text-anchor': an, class: 'ae-strong' }, svg); t.textContent = n; t.style.fill = n === 'Alto-Bajo' ? '#e08a2c' : n === 'Bajo-Alto' ? '#4f9fc7' : CL[n]; });
     // recta de pendiente I
-    if (M) { const I = M.I; const xs = x.domain(); const ln = svgEl('line', { x1: x(xs[0]), y1: y(I * xs[0]), x2: x(xs[1]), y2: y(I * xs[1]), 'stroke-width': 1.6 }, svg); ln.style.stroke = 'var(--color-fg)'; const lt = svgEl('text', { x: x(xs[1]) - 4, y: y(I * xs[1]) + (I >= 0 ? 14 : -6), 'text-anchor': 'end', class: 'ae-strong' }, svg); lt.textContent = 'I = ' + f3(I); }
+    if (M) { const I = M.I; const xs = x.domain(); const ln = svgEl('line', { x1: x(xs[0]), y1: y(I * xs[0]), x2: x(xs[1]), y2: y(I * xs[1]), 'stroke-width': 1.6 }, svg); ln.style.stroke = 'var(--color-fg)'; const lt = svgEl('text', { x: W - m.r, y: 14, 'text-anchor': 'end', class: 'ae-strong' }, svg); lt.textContent = 'I de Moran = ' + f3(I); const lw = lt.getComputedTextLength ? lt.getComputedTextLength() : 90; const sw = svgEl('line', { x1: W - m.r - lw - 26, x2: W - m.r - lw - 6, y1: 10, y2: 10, 'stroke-width': 1.6 }, svg); sw.style.stroke = 'var(--color-fg)'; }
     const tip = tipFor(box);
     const ord = [...U].sort((a, b) => (a.cluster === 'No significativo') - (b.cluster === 'No significativo')).reverse();
     ord.forEach((u) => {
